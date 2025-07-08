@@ -196,11 +196,85 @@ wget -N --no-check-certificate https://raw.githubusercontent.com/ToyoDAdoubiBack
 - 脚本说明: iptables 端口转发 一键安装管理脚本
 - 系统支持: CentOS6+ / Debian6+ / Ubuntu14+
 - 使用方法: https://doub.io/wlzy-20/
-
-#### 下载安装:
+- #### 下载安装:
 ``` bash
 wget -N --no-check-certificate https://raw.githubusercontent.com/ToyoDAdoubiBackup/doubi/master/iptables-pf.sh && chmod +x iptables-pf.sh && bash iptables-pf.sh
 ```
+- 运行脚本后，会显示菜单：
+0. 升级脚本
+————————————
+1. 安装 iptables
+2. 清空 iptables 端口转发
+————————————
+3. 查看 iptables 端口转发
+4. 添加 iptables 端口转发
+5. 删除 iptables 端口转发
+————————————
+注意：初次使用前请请务必执行 1. 安装 iptables(不仅仅是安装)
+选择 4. 添加 iptables 端口转发 后，会提示你依次输入 欲转发IP、欲转发端口、本地监听端口、本地IP、转发类型：
+请输入 iptables 欲转发至的 远程端口 [1-65535] (支持端口段 如 2333-6666, 被转发服务器):10000-11000
+欲转发端口 : 10000-11000
+请输入 iptables 欲转发至的 远程IP(被转发服务器):2.2.2.2
+欲转发服务器IP : 2.2.2.2
+请输入 iptables 本地监听端口 [1-65535] (支持端口段 如 2333-6666)
+(默认端口: 10000-11000):
+本地监听端口 : 10000-11000
+请输入 本服务器的 公网IP网卡IP(注意是网卡绑定的IP，而不仅仅是公网IP，回车自动检测):
+本服务器IP : 1.1.1.1
+请输入数字 来选择 iptables 转发类型:
+1. TCP
+2. UDP
+3. TCP+UDP
+(默认: TCP+UDP):
+——————————————————————————————
+请检查 iptables 端口转发规则配置是否有误 !
+本地监听端口 : 10000-11000
+服务器 IP : 2.2.2.2
+欲转发的端口 : 10000-11000
+欲转发 IP : 1.1.1.1
+转发类型 : TCP+UDP
+——————————————————————————————
+最后会提示你确认配置是否有误，如果没有问题就按任意键继续，启动成功后就会提示：
+——————————————————————————————
+iptables 端口转发规则配置完成 !
+本地监听端口 : 10000:11000
+服务器 IP : 1.1.1.1
+欲转发的端口 : 10000:11000
+欲转发 IP : 2.2.2.2
+转发类型 : TCP+UDP
+——————————————————————————————
+选择 3. 查看 iptables 端口转发 后，会显示如下：
+当前有 2 个 iptables 端口转发规则。
+1. 类型: tcp 监听端口: 10000:20000 转发IP和端口: 2.2.2.2:10000-20000
+2. 类型: udp 监听端口: 10000:20000 转发IP和端口: 2.2.2.2:10000-20000
+选择 5. 删除 iptables 端口转发 后，也会显示列表，然后让你选择 要删除的端口转发规则序号。
+客户端说明
+假设你的海外服务器(被中转)中搭建的Ss服务端的IP是 2.2.2.2 ，SS端口是 10000 。
+假设中转服务器的IP是 1.1.1.1 ，本地监听端口和SS端口不一致，本地监听端口是 20000 。
+那么，你的Ss客户端，添加Ss服务器，IP填写 1.1.1.1 ，端口填写 20000 ，其他的 密码/加密方式/协议/混淆等等 全部和原Ss账号一样！
+其他说明
+CentOS 7 默认的防火墙是 firewall，要使用本脚本，请先卸载或关闭 firewall 服务器，并安装 iptables 全套软件。
+ifconfig
+# 输入命令后会看到 网卡信息，我们看第二行的 inet addr:http://xxx.xxx.xxx.xxx ，这里的 xxx 就是你的网卡绑定的IP。
+提示wget: unknown host “raw.githubusercontent.com” 之类的错误
+这是无法解析我的域名，多半是DNS的问题，请更换DNS为谷歌DNS。
+echo -e "nameserver 8.8.8.8\nnameserver 8.8.4.4" > /etc/resolv.conf
+提示 wget: command not found 的错误
+更换 apt源，解决安装错误：[错误] iptables安装失败 等等
+一些VPS的 apt源太老旧，导致无法安装或升级iptables，所以我这里写上如何更换 apt源。所以我只针对这两个系统，Centos的自己去谷歌yum镜像源。
+依次输入就可以更换apt源了，下面的代码是以 us美国 为例，你可以自己去这里选一个近一些合适的，然后替换下面代码中 us.sources.list 的 us 。
+wget -N --no-check-certificate -P /etc/apt https://raw.githubusercontent.com/ToyoDAdoubiBackup/doubi/master/sources/us.sources.list
+rm -rf /etc/apt/sources.list
+cp /etc/apt/us.sources.list /etc/apt/sources.list
+如果是NAT机，选择自动检测外网IP地址，会导致转发失败，请检查自己的服务器网卡IP（命令ifconfig），并手动在转发规则那里输入IP地址。
+&iptables规则设置后都是即时生效的,在机器重启后,iptables中的配置信息会被清空.
+您可以将这些配置保存下来,让iptables在启动时自动加载,省得每次都得重新输入.
+iptables-save和iptables-restore就是用来保存和恢复设置的.
+先将防火墙规则保存到/etc/iptables.up.rules文件中:
+iptables-save > /etc/iptables.up.rules
+然后修改脚本/etc/network/interfaces,在末尾添加一行,在网络启动时应用防火墙规则:
+pre-up iptables-restore < /etc/iptables.up.rules
+
 
 ---
 ## brook-pf.sh
