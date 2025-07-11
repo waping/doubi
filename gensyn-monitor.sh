@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # 钉钉机器人 Webhook 地址，替换为你的实际地址
-DINGTALK_WEBHOOK="https://oapi.dingtalk.com/robot/send?access_token=your_access_token"
+DINGTALK_WEBHOOK="https://oapi.dingtalk.com/robot/send?access_token=7389421a5dd8bc6c01e9b804f7619055dc07dfaafede557e1d5662213bd73984"
 
 # 目标地址列表，可添加多个地址
 ADDRESSES=("0xFaD7C5e93f28257429569B854151A1B8DCD404c2" "0xCC7a23b50fF2370e6698663e4b40345d977170a6" "0xFaD7C5e93f28257429569B854151A1B8DCD404c2")
