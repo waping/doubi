@@ -10,7 +10,11 @@ const ADDRESSES = [
 
 async function monitor() {
     let message = '';
-    const browser = await puppeteer.launch({ headless: "new" });
+    // 添加 --no-sandbox 选项
+    const browser = await puppeteer.launch({
+        headless: "new",
+        args: ['--no-sandbox']
+    });
     const page = await browser.newPage();
 
     for (const address of ADDRESSES) {
